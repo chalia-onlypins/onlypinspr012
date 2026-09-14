@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" class="fl-leaf">
+<html lang="ko" data-page="012" class="fl-leaf">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -206,19 +206,46 @@
 .fl-pink  {--f-bg:var(--s-pink);   --f-deep:var(--s-rose)}
 .fl-butter{--f-bg:var(--s-butter); --f-deep:var(--s-honey)}
 .fl-sky   {--f-bg:var(--s-sky);    --f-deep:var(--s-navy)}
+
+/* ⭐ 4차(2026-09-14 · Master 「배경색들이 다 너무 동일한데」) — «페이지마다 다른 바탕» + «섹션 띠 교차».
+   ① 페이지 바탕 --p-bg: 15개 전부 다른 연한 색. 번호는 빌드가 html 태그에 data-page 로 붙인다(_랜딩빌드.mjs).
+      맛(fl-*)은 6가지라 겹치므로 바탕은 번호로 따로 준다. 전부 L≥0.88 의 연한 톤이라 --s-mute 대비(4.5:1)가 유지된다.
+   ② 섹션 띠: 본문 섹션을 «짝수 번째마다 흰 띠»로 교차 — 앱 홈의 「민트 바탕 · 흰 신뢰 줄 · 노란 띠」 리듬.
+      ⚠️ :where() 로 특정도를 0 으로 둔다 → 페이지 CSS 가 자기 섹션 바탕(크림 판·다크 CTA 등)을 정했으면 «그쪽이 이긴다».
+   ⚠️ data-page 가 없으면 기본값(앱 민트)으로 조용히 떨어진다 → _검증.mjs 가 data-page 누락을 잡는다. */
+:root{--p-bg:var(--s-mint)}
+/* ⚠️ 바탕은 그 페이지 «맛»과 다른 계열로 고른다 — 같은 계열이면 히어로 카드(맛 색)가 바탕에 묻힌다
+      (첫 판에서 001 피치 카드 × 피치 바탕 · 009 핑크 × 로즈가 그랬다 · 캡처로 확인). 괄호 안이 그 페이지의 맛. */
+[data-page="001"]{--p-bg:#e8f2fd}   /* 하늘   (맛 피치) */
+[data-page="002"]{--p-bg:#f6f6d8}   /* 레몬   (맛 라벤더) */
+[data-page="003"]{--p-bg:#efeafb}   /* 라일락 (맛 버터) */
+[data-page="004"]{--p-bg:#fdf0e6}   /* 피치   (맛 하늘) */
+[data-page="005"]{--p-bg:#faeaf1}   /* 블러시 (맛 민트) */
+[data-page="006"]{--p-bg:#e4f3f7}   /* 아이스 (맛 핑크) */
+[data-page="007"]{--p-bg:#e3f2e8}   /* 세이지 (맛 피치) */
+[data-page="008"]{--p-bg:#f3eefc}   /* 라벤더 (맛 버터) */
+[data-page="009"]{--p-bg:#e8f7e4}   /* 민트   (맛 핑크) */
+[data-page="010"]{--p-bg:#e6f5f2}   /* 아쿠아 (맛 피치) */
+[data-page="011"]{--p-bg:#fcefe0}   /* 살구   (맛 라벤더) */
+[data-page="012"]{--p-bg:#fdeaee}   /* 로즈   (맛 민트) */
+[data-page="013"]{--p-bg:#faf4d9}   /* 버터   (맛 하늘) */
+[data-page="014"]{--p-bg:#fbeee8}   /* 코랄   (맛 민트) */
+[data-page="015"]{--p-bg:#edf6dc}   /* 라임   (맛 핑크) */
 /* 📌 맛 클래스는 :root(=html 태그) 와 «같은 요소»에 붙는다. 맛은 이제 «바탕색·짙은 글자»만 정하고,
       필기체·강조 빨강은 맛과 무관하게 앱 한 색이다(2차). */
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
-  margin:0; background:var(--s-mint); color:var(--s-text);
+  margin:0; background:var(--p-bg); color:var(--s-text);
   font-family:var(--s-font);
   font-size:16px; line-height:1.68; letter-spacing:-.01em;
   word-break:keep-all; overflow-wrap:break-word;
 }
 .wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--u-pad)}
 section{padding:clamp(44px,11vw,64px) 0}
+/* 섹션 띠 교차(4차) — 특정도 0. 페이지가 바탕을 정한 섹션은 건드리지 않는다. */
+:where(main > section:nth-of-type(even)){background:var(--s-card)}
 /* ⭐ 2026-09-14 3차(Master 「제목 서체도 앱처럼 굵은 고딕으로」) — 앱의 섹션 제목(「오늘의 스쿱」·「이용 방법」)은
       Jua 가 아니라 «고딕 800»이다(계산된 스타일 실측: Geist→Gothic A1 · font-weight 800). Jua 는 앱에서도
       캐러셀의 큰 브랜드 이름에만 쓴다 → 랜딩도 제목은 --s-heading, 숫자·카드 이름 같은 «표시 글자»만 --s-display. */
@@ -311,7 +338,8 @@ b,strong{font-weight:700}
 :root body .usib-l b{font-weight:700; color:var(--s-text)}
 :root body .usib-l span{opacity:1; color:var(--s-text-2)}
 
-:root body .ufaq{border-top:0}
+/* FAQ 는 흰 판(dl)을 품으므로 흰 띠에 걸리면 판이 안 보인다 → 늘 페이지 바탕으로 둔다(4차) */
+:root body .ufaq{border-top:0; background:transparent}
 :root body .ufaq .wrap > dl{background:var(--s-card); border-radius:40px; padding:22px 22px 6px; box-shadow:var(--s-sh-2)}
 /* ⚠️ 이 라벨은 «한글»(자주 묻는 것)이다 — Pacifico 에는 한글이 없어 시스템 붓글씨체로 떨어진다(2026-09-14 캡처로 확인).
       필기체는 영문 장식(data-script)에만 쓴다. */
